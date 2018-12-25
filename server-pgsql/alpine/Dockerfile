@@ -84,8 +84,12 @@ RUN apk add ${APK_FLAGS_DEV} --virtual build-dependencies \
             openldap-dev \
             pcre-dev \
             postgresql-dev \
+            py-pip \
             subversion \
             unixodbc-dev && \
+    cd /tmp/ && \
+    echo -e "PySocks==1.6.8\nrequests==2.18.4\nrequests-oauthlib==0.6.2" >requirements.txt  && \
+    pip install -r requirements.txt  && \
     cd /tmp/ && \
     svn --quiet export ${ZBX_SOURCES} zabbix-${ZBX_VERSION} && \
     cd /tmp/zabbix-${ZBX_VERSION} && \
