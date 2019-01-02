@@ -5,8 +5,8 @@ ARG BUILD_DATE
 ARG VCS_REF
 
 ARG APT_FLAGS_COMMON="-y"
-ARG APT_FLAGS_PERSISTENT="${APT_FLAGS_COMMON} --no-install-recommends"
-ARG APT_FLAGS_DEV="${APT_FLAGS_COMMON} --no-install-recommends"
+ARG APT_FLAGS_PERSISTENT="${APT_FLAGS_COMMON} --no-install-recommends --no-install-suggests"
+ARG APT_FLAGS_DEV="${APT_FLAGS_COMMON} --no-install-recommends --no-install-suggests"
 ENV LANG=en_US.UTF-8 LANGUAGE=en_US:en LC_ALL=en_US.UTF-8 DEBIAN_FRONTEND=noninteractive TERM=xterm \
     MIBDIRS=/var/lib/snmp/mibs/ietf:/var/lib/snmp/mibs/iana:/usr/share/snmp/mibs:/var/lib/zabbix/mibs MIBS=+ALL \
     ZBX_TYPE=server ZBX_DB_TYPE=postgresql ZBX_OPT_TYPE=none
@@ -63,11 +63,24 @@ RUN apt-get ${APT_FLAGS_COMMON} update && \
             libssh2-1 \
             libssl1.1 \
             libxml2 \
+            curl \
+            wget \
+            nmap \
+            netcat \
+            git \
+            python-pip \
+            python3-pip \
+            python-setuptools \
             postgresql-client \
             snmp-mibs-downloader \
             unixodbc && \
     apt-get ${APT_FLAGS_COMMON} autoremove && \
     apt-get ${APT_FLAGS_COMMON} clean && \
+    echo "PySocks==1.6.8" >requirements.txt  && \
+    echo "requests==2.18.4" >>requirements.txt  && \
+    echo "requests-oauthlib==0.6.2" >>requirements.txt  && \
+    pip install -r requirements.txt  && \
+    pip3 install requests && \
     rm -rf /var/lib/apt/lists/*
 
 ARG MAJOR_VERSION=4.0
